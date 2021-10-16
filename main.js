@@ -23,43 +23,36 @@ class Field {
     static generateField(h, w, per) {
         let numSq = h*w;
         let genArr = [];
-        let finArr = []; 
-        genArr.push(pathCharacter)
-        while (numSq > 1) {
+        let finArr = [];
+        let numHoles = Math.floor(((numSq-2)*per)/100)
+        console.log(numHoles)
+        let numField = numSq-numHoles-2
+        genArr.push(hat);
+        while (numHoles > 0) {
+            genArr.push(hole);
+            numHoles -= 1;
+        }
+        while (numField > 0) {
             genArr.push(fieldCharacter);
-            numSq -= 1;
+            numField -= 1;
         }
-        let putHat = function() {
-            let randomNum = Math.floor(Math.random()*genArr.length)
-            if (randomNum != 0) {
-                genArr[randomNum] = hat
-            }  else {
-                putHat()
-            }}
-        putHat()
+        genArr = genArr.sort(() => Math.random() - 0.5)
+        genArr.unshift(pathCharacter)    
 
-        let putHoles = function() {
-            let numHoles = Math.floor(((genArr.length-2)*per)/100)
-            let randomNum = Math.floor(Math.random()*genArr.length)
-            for (let j=numHoles; j>0; j--) {
-                if (genArr[randomNum] == fieldCharacter) {
-                    genArr[randomNum] = hole;
-                }
-            }
-        }
-        putHoles()
         for (let i=0; i<genArr.length; i+=w) {
             let temp = genArr.slice(i, i+w);
             finArr.push(temp)
         }
-        console.log(finArr)
+        
+        return finArr
+
     }
 }
 
-let practice = new Field([['*', '0', '0'], ['░', '░', '░'], ['0', '0', '^']])
 
-playGame = function() {
-    practice.print()
+
+playGame = function(myField) {
+    myField.print()
     let userInput = prompt('Where would you like to move?')
     switch(userInput) {
         case 'u':
@@ -76,19 +69,22 @@ playGame = function() {
             break;
         default:
         console.log('You did not input a valid option')
-        playGame()
+        playGame(myField)
   }
 
-if (x < 0 || x > practice.fieldArr[0].length-1 || y < 0 || y > practice.fieldArr.length-1) {
+if (x < 0 || x > myField.fieldArr[0].length-1 || y < 0 || y > myField.fieldArr.length-1) {
     console.log('You went out of bounds');
-} else if (practice.fieldArr[y][x] == hat) {
+} else if (myField.fieldArr[y][x] == hat) {
     console.log('You found your hat')
-} else if (practice.fieldArr[y][x] == hole) {
+} else if (myField.fieldArr[y][x] == hole) {
     console.log('You fell down a hole')
 } else {
-    practice.fieldArr[y][x] = '*'
-    playGame()
+    myField.fieldArr[y][x] = '*'
+    playGame(myField)
 }
 }
-// playGame()
-Field.generateField(3,3, 50)
+ 
+let philsfield = new Field(Field.generateField(5,5, 50))
+let practice = new Field([['*', 'O', 'O'], ['░', '░', '░'], ['O', 'O', '^']])
+playGame(philsfield)
+
